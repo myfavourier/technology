@@ -4,6 +4,256 @@
 
 ## Git
 
+### 简介
+
+Git是目前世界上最先进的分布式版本控制系统，跟github配合使用管理文件系统
+
+### 基本使用
+
+初始化仓库
+
+```
+git init
+```
+
+添加文件到仓库
+
+```
+git add filename 
+```
+
+添加所有
+
+```
+git add .
+```
+
+将文件提交到仓库
+
+```
+git commit -m "备注"
+```
+
+### 版本控制
+
+显示从最近到最远的提交日志
+
+```
+git log
+```
+
+加上`--pretty=oneline`参数可以简化信息
+
+```
+git log --pretty=oneline
+```
+
+记录每一次命令
+
+```
+git reflog
+```
+
+查看文件状态
+
+```
+git status
+```
+
+查看工作区和版本库里面最新版本的区别
+
+```
+git diff HEAD -- filename
+```
+
+丢弃工作区的修改
+
+```
+git checkout -- file
+```
+
+把暂存区的修改撤销掉（unstage），重新放回工作区
+
+```
+git reset HEAD file
+```
+
+在Git中，用`HEAD`表示当前版本,上一个版本就是`HEAD^`，上上一个版本就是`HEAD^^`，当然往上100个版本写100个`^`比较容易数不过来，所以写成`HEAD~100`。
+
+回退版本使用
+
+```
+git reset --hard HEAD^
+```
+
+或者使用git log中的日志号
+
+```
+git reset --hard xxxx
+```
+
+### 远程仓库
+
+首先在本地跟github上分别建仓库
+
+关联两个仓库
+
+```
+git remote add origin git@github.com:github_username/github_repository.git
+```
+
+推送
+
+```
+git push -u origin master
+```
+
+删除远程库
+
+```
+git remote rm origin
+```
+
+从远程库克隆
+
+```
+git clone githuburl
+```
+
+### 分支管理
+
+创建分支
+
+```
+git branch dev
+```
+
+切换分支
+
+```
+git checkout dev/ git switch dev
+```
+
+创建并切换分支
+
+```
+git checkout -b dev/ git switch -c dev
+```
+
+查看当期分支
+
+```
+git branch
+```
+
+将当前分支合并到master分支
+
+```
+git merge dev
+```
+
+删除分支
+
+```
+git branch -d dev
+```
+
+查看分支合并图
+
+```
+git log --graph
+```
+
+保存工作现场
+
+```
+git stash
+```
+
+查看stash内容
+
+```
+git stash list
+```
+
+恢复现场（恢复的同时删除删除stash内容）
+
+```
+git stash pop / git stash apply && git stash drop
+```
+
+复制特定提交到当前分支
+
+```
+git cherry-pick xxxx
+```
+
+分支：
+
+- `master`分支是主分支，因此要时刻与远程同步；
+- `dev`分支是开发分支，团队所有成员都需要在上面工作，所以也需要与远程同步；
+- bug分支只用于在本地修复bug，就没必要推到远程了，除非老板要看看你每周到底修复了几个bug；
+- feature分支是否推到远程，取决于你是否和你的小伙伴合作在上面开发。
+
+多人协作的工作模式通常是这样：
+
+1. 首先，可以试图用`git push origin <branch-name>`推送自己的修改；
+2. 如果推送失败，则因为远程分支比你的本地更新，需要先用`git pull`试图合并；
+3. 如果合并有冲突，则解决冲突，并在本地提交；
+4. 没有冲突或者解决掉冲突后，再用`git push origin <branch-name>`推送就能成功！
+
+### 标签
+
+打上标签
+
+```
+git tag name
+```
+
+给某个commit打上标签
+
+```
+git tag name xxxcommit
+```
+
+查看标签
+
+```
+git tag
+```
+
+查看某个标签
+
+```
+git show tagname
+```
+
+创建带有说明的标签，用`-a`指定标签名，`-m`指定说明文字
+
+```
+git tag -a v0.1 -m "version 0.1 released" 1094adb
+```
+
+删除标签
+
+```
+git tag -d tagname
+```
+
+推送标签到远程
+
+```
+git push origin tagname
+```
+
+推送所有标签
+
+```
+git push origin --tags
+```
+
+
+
 ## Bash
 
 ### Bash简介
