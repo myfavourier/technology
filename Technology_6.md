@@ -259,3 +259,109 @@ Android Gradle Plugin在1.5.0-beta1时开始提供Transform API，可以在class
 根据添加的顺序，先执行自定义的transform，后面再执行自带的transform，第一个transform会接收javac编译和资源编译的中间产物，每个transform任务对class处理完后再传递给下一个transform任务。
 
 ![image.png](http://sf1-vcloudcdn.pstatp.com/img/tos-cn-i-0000/6bc12a8f3f2f4475a92fa86f314c9a77~tplv-noop.image?width=900&height=1090)
+
+## 上传aar到maven私服
+
+**在gradle中新建task**
+
+如果你需要将某个module打包成aar，并上传到maven上去，需要在这个module下面的build.gradle文件中添加如下代码:
+
+![img](https://ask.qcloudimg.com/http-save/7881087/ptqnn13ejh.jpeg?imageView2/2/w/1620)
+
+其中代码：
+
+```javascript
+apply plugin: 'maven'
+```
+
+表示我们要应用的插件。  
+
+MAVEN_LOCAL_PATH表示maven服务器地址，packaging表示需要打包的类型，groupId:artifactId:version，就是我们需要依赖的字段。
+
+**上传aar到maven服务器**
+
+在studio中打开控制台，执行命令
+
+```javascript
+./gradlew uploadArchives
+```
+
+就能看到log一直跑，直到99%上传aar，如果提示buildSuccessful，那祝贺你，你已经将aar文件上传到maven服务器了。
+
+**上传时遇到的问题**
+
+执行上传任务时，其实遇到蛮多问题的，这里记住几个就都写下来～
+
+**fail to resolve: TestProject:datalibrary:unspecified**
+
+解决办法：将
+
+```javascript
+compile 'com.android.commonlibrary:datalibrary:0.1.0'
+```
+
+改为
+
+```javascript
+compile 'com.android.commonlibrary:datalibrary:0.1.0@aar'
+```
+
+详情请见http://stackoverflow.com/questions/36114259/errorfailed-to-resolve-android-iconicslibrary-coreunspecified
+
+**return Code 401**
+
+解决办法：这是上传的账号密码不对，请跟maven仓库管理员认真核实申请的账号密码。
+
+**Fix the issues identified by lint**
+
+这个错误具体截图所示:  
+
+![img](https://ask.qcloudimg.com/http-save/7881087/aq1k5hci2w.jpeg?imageView2/2/w/1620)
+
+根据log提示，我们需要在每个module的build.gradle文件中的android域内添加代码
+
+```javascript
+android{
+  lintOptions{
+  abortOnError false
+ }
+}
+```
+
+记住，是每个module都得添加，不然还是会出错，血淋淋的教训呐
+
+**声明需要引用的maven服务器**
+
+在我们主工程的最外层的build.gradle中，添加如下代码：
+
+```javascript
+allprojects {
+ repositories {
+  jcenter()
+  maven {
+   url "http://192.168.1.107:9999/repository/commonlibrary/"
+   credentials {
+    username 'louxiaohui'
+    password '111111'
+   }
+  }
+ }
+}
+```
+
+注意：由于现在经常用的jcenter，bintray，nexus，aar包都是public的，所以声明maven服务器时，不需要设置账号密码，但是对于有些设置了账号密码的，就得添加代码进行认证～
+
+```javascript
+credentials {
+ username 'louxiaohui'
+ password '111111'
+}
+```
+
+**引用aar**
+
+这个就简单啦，代码大家应该都很熟悉，在需要引用此aar的 module中的build.gradle文件中,添加如下代码:
+
+```javascript
+compile 'com.android.commonlibrary:datalibrary:0.1.0'
+```
